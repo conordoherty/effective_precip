@@ -5,10 +5,10 @@ from scipy.interpolate import interp1d
 
 nodata = -9999
 
-et_arr = pickle.load(open('et_arr.p', 'rb'))
+et_arr = pickle.load(open('data/et_arr.p', 'rb'))
 et = np.ma.masked_where(et_arr==nodata, et_arr)
 
-eto_arr = pickle.load(open('eto_arr.p', 'rb'))
+eto_arr = pickle.load(open('data/eto_arr.p', 'rb'))
 etof = et/eto_arr
 
 def interp(ts, kind='linear'):
@@ -27,10 +27,10 @@ for i in range(et.shape[0]):
     for j in range(et.shape[1]):
         etof_interp[i, j] = interp(etof[i, j])
 
-pickle.dump(etof_interp, open('etof_interp.p', 'wb'))
+pickle.dump(etof_interp, open('data/etof_interp.p', 'wb'))
 
 et_interp = etof_interp*eto_arr
-pickle.dump(et_interp, open('et_interp.p', 'wb'))
+pickle.dump(et_interp, open('data/et_interp.p', 'wb'))
 
 #ts = et[100, 100]
 

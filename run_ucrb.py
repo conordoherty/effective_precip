@@ -27,16 +27,19 @@ for i in range(et_arr.shape[0]):
         dp_arr[i, j] = dp_ts
         phantom_arr[i, j] = phantom_ts
 
-dts = pd.date_range('2019-01-01', '2020-12-31')
-# water year indices
-wyr_inds = (dts>='2019-10-01')&(dts<'2020-10-01')
+pickle.dump(dr_arr, open('data/dr_arr.p', 'wb'))
+pickle.dump(dp_arr, open('data/dp_arr.p', 'wb'))
 
-pr_sum = pr_arr[:, :, wyr_inds].sum(axis=-1)
-dp_sum = dp_arr[:, :, wyr_inds].sum(axis=-1)
-
-pr_min_dp = pr_sum-dp_sum
-eff_prec = np.ma.masked_where(aws==nodata, pr_min_dp)
-
-plt.imshow(eff_prec, cmap='plasma')
-plt.colorbar()
-plt.show()
+#dts = pd.date_range('2019-01-01', '2020-12-31')
+## water year indices
+#wyr_inds = (dts>='2019-10-01')&(dts<'2020-10-01')
+#
+#pr_sum = pr_arr[:, :, wyr_inds].sum(axis=-1)
+#dp_sum = dp_arr[:, :, wyr_inds].sum(axis=-1)
+#
+#pr_min_dp = pr_sum-dp_sum
+#eff_prec = np.ma.masked_where(aws==nodata, pr_min_dp)
+#
+#plt.imshow(eff_prec, cmap='plasma')
+#plt.colorbar(label='Eff precip (mm)')
+#plt.show()
