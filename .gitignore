@@ -1,1 +1,3 @@
 data/*.p
+data/*.tgz
+epr_rasters/*.tif
