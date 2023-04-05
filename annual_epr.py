@@ -26,4 +26,12 @@ for wyr in water_years:
     epr = yr_pr - yr_dp
     epr[aws==nodata] = nodata
 
-    write_ras_same(epr, f'epr_rasters/epr_{wyr}.tif', 'ucrb_aws.tif', no_data=nodata)
+    epr_frac = epr/yr_pr
+    epr_frac[aws==nodata] = nodata
+
+    write_ras_same(yr_pr, f'epr_rasters/pr_{wyr}.tif', 'ucrb_aws.tif',
+                   no_data=nodata)
+    write_ras_same(epr, f'epr_rasters/epr_{wyr}.tif', 'ucrb_aws.tif',
+                   no_data=nodata)
+    write_ras_same(epr_frac, f'epr_rasters/epr_frac_{wyr}.tif', 'ucrb_aws.tif',
+                   no_data=nodata)
