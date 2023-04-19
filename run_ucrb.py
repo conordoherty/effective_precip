@@ -29,6 +29,7 @@ for i in range(et_arr.shape[0]):
 
 pickle.dump(dr_arr, open('data/dr_arr.p', 'wb'))
 pickle.dump(dp_arr, open('data/dp_arr.p', 'wb'))
+pickle.dump(phantom_arr, open('data/phantom_arr.p', 'wb'))
 
 #dts = pd.date_range('2019-01-01', '2020-12-31')
 ## water year indices
