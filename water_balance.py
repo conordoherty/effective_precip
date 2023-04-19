@@ -7,7 +7,7 @@ def do_wb(taw, pr_ts, et_ts):
 
     d_ro = taw
     #d_ro = 0
-    last_r = d_ro
+    last_dr = d_ro
 
     dr_ts = np.zeros(num_steps)
     dp_ts = np.zeros(num_steps)
@@ -17,15 +17,15 @@ def do_wb(taw, pr_ts, et_ts):
         pr = pr_ts[i]
         et = et_ts[i]
 
-        dp = max(pr - et - last_r, 0)
-        dr = min(max(last_r - pr + et + dp, 0), taw)
-        if last_r - pr + et > taw:
-            phantom = et-(dr-last_r+pr)
+        dp = max(pr - et - last_dr, 0)
+        dr = min(max(last_dr - pr + et + dp, 0), taw)
+        if last_dr - pr + et > taw:
+            phantom = et-(dr-last_dr+pr)
         else:
             phantom = 0
         pr_min_dp = pr - dp 
-        added_to_rz = max(last_r-dr, 0)
-        last_r = dr
+        added_to_rz = max(last_dr-dr, 0)
+        last_dr = dr
 
         dr_ts[i] = dr
         dp_ts[i] = dp
