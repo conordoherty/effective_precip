@@ -27,6 +27,9 @@ for i in range(et.shape[0]):
     for j in range(et.shape[1]):
         etof_interp[i, j] = interp(etof[i, j])
 
+# clamp negative values to zero
+etof_interp[etof_interp < 0] = 0
+
 pickle.dump(etof_interp, open('data/etof_interp.p', 'wb'))
 
 et_interp = etof_interp*eto_arr

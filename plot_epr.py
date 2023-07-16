@@ -5,7 +5,8 @@ from pyproj import Transformer
 
 nodata = -9999
 
-aws_ras = gdal.Open('ucrb_aws.tif')
+#aws_ras = gdal.Open('ucrb_aws.tif')
+aws_ras = gdal.Open('avg_aws.tif')
 aws_gt = aws_ras.GetGeoTransform()
 aws = aws_ras.ReadAsArray()
 aws = np.ma.masked_where(aws==nodata, aws)
@@ -19,41 +20,61 @@ br_wgs = to_wgs.transform(*br)
 
 ext = [ul_wgs[1], br_wgs[1], br_wgs[0], ul_wgs[0]]
 
+#in_dir = 'epr_rasters'
+in_dir = 'epr_rasters_avg_aws'
+#out_dir = 'pres'
+out_dir = 'pres_avg_aws'
+suff = ''
+
 plt.figure(figsize=(8, 4))
 
-#plt.imshow(aws, cmap='magma', extent=ext)
-yr = 2019
+plt.imshow(aws, cmap='magma', extent=ext)
+plt.colorbar(label='AWS (mm)')
+plt.tight_layout()
+plt.savefig(f'{out_dir}/aws.png')
+plt.clf()
+
 ras = 'phantom'
 for yr in range(2019, 2022):
-    #epr_frac = gdal.Open(f'epr_rasters/epr_frac_{yr}.tif').ReadAsArray()
-    #epr_frac = np.ma.masked_where(aws.mask, epr_frac)
-    #plt.imshow(epr_frac, extent=ext, cmap='RdYlBu', vmin=0, vmax=1)
-    
-    #pr = gdal.Open(f'epr_rasters/pr_{yr}.tif').ReadAsArray()
-    #plt.imshow(pr, cmap='Blues', vmin=133, vmax=350)
-    
-    #epr = gdal.Open(f'epr_rasters/epr_{yr}.tif').ReadAsArray()
-    #epr = np.ma.masked_where(aws.mask, epr)
-    #print(epr.min(), epr.max())
-    #plt.imshow(epr, cmap='Greens', vmin=16, vmax=350)
-
-    phantom = gdal.Open(f'epr_rasters/phantom_{yr}.tif').ReadAsArray()
-    #phantom = np.ma.masked_where(aws.mask, phantom)
-    #print(phantom.min(), phantom.max())
-    #plt.imshow(phantom, extent=ext, vmin=0, vmax=1335, cmap='nipy_spectral')
-
-    total = gdal.Open(f'epr_rasters/total_et_{yr}.tif').ReadAsArray()
-    ph_div_tot = phantom / total
-    ph_div_tot = np.ma.masked_where(aws.mask, ph_div_tot)
-    plt.imshow(ph_div_tot, vmin=0, vmax=1, extent=ext, cmap='RdYlBu')
-
+    epr_frac = gdal.Open(f'{in_dir}/epr_frac_{yr}.tif').ReadAsArray()
+    epr_frac = np.ma.masked_where(aws.mask, epr_frac)
+    plt.imshow(epr_frac, extent=ext, cmap='RdYlBu', vmin=0, vmax=1)
+    plt.colorbar(label='Eff Pr / Pr')
+    plt.title(f'Water year {yr}')
     plt.tight_layout()
-    #plt.colorbar(label='AWS (mm)')
-    #plt.colorbar(label='Eff Pr / Pr')
-    #plt.colorbar(label='Pr (mm)')
-    #plt.colorbar(label='Pr (mm)')
-    #plt.colorbar(label='Phantom (mm)')
-    plt.colorbar(label='Phantom / Total ET')
-    plt.savefig(f'pres/ph_div_tot_{yr}.png')
-    
+    plt.savefig(f'{out_dir}/epr_frac_{yr}{suff}.png')
     plt.clf()
+    
+    #pr = gdal.Open(f'{in_dir}/pr_{yr}.tif').ReadAsArray()
+    #plt.imshow(pr, extent=ext, cmap='Blues', vmin=133, vmax=350)
+    #plt.colorbar(label='Pr (mm)')
+    #plt.title(f'Water year {yr}')
+    #plt.savefig(f'{out_dir}/pr_{yr}.png')
+    #plt.clf()
+    
+    epr = gdal.Open(f'{in_dir}/epr_{yr}.tif').ReadAsArray()
+    epr = np.ma.masked_where(aws.mask, epr)
+    #print(epr.min(), epr.max())
+    plt.imshow(epr, extent=ext, cmap='Greens', vmin=16, vmax=350)
+    plt.colorbar(label='Eff Pr (mm)')
+    plt.title(f'Water year {yr}')
+    plt.savefig(f'{out_dir}/epr_{yr}{suff}.png')
+    plt.clf()
+
+    #phantom = gdal.Open(f'{in_dir}/phantom_{yr}.tif').ReadAsArray()
+    #phantom = np.ma.masked_where(aws.mask, phantom)
+    ##print(phantom.min(), phantom.max())
+    #plt.imshow(phantom, extent=ext, vmin=0, vmax=1335, cmap='nipy_spectral')
+    #plt.colorbar(label='Phantom (mm)')
+    #plt.title(f'Water year {yr}')
+    #plt.savefig(f'{out_dir}/phantom_{yr}.png')
+    #plt.clf()
+
+    #total = gdal.Open(f'{in_dir}/total_et_{yr}.tif').ReadAsArray()
+    #ph_div_tot = phantom / total
+    #ph_div_tot = np.ma.masked_where(aws.mask, ph_div_tot)
+    #plt.imshow(ph_div_tot, vmin=0, vmax=1, extent=ext, cmap='RdYlBu')
+    #plt.colorbar(label='Phantom / Total ET')
+    #plt.title(f'Water year {yr}')
+    #plt.savefig(f'{out_dir}/ph_div_tot_{yr}.png')
+    #plt.clf()

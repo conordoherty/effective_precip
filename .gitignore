@@ -1,3 +1,13 @@
 data/*.p
 data/*.tgz
 epr_rasters/*.tif
+comparison_plots/*
+extra_geo/*
+*.xml
+*.swp
+__pycache__/
+*.qgz
+data_avg/*.p
+data_avg_avs/*.p
+pres*
+data_irrig/

@@ -2,17 +2,22 @@ import numpy as np
 from numba import njit
 
 @njit
-def do_wb(taw, pr_ts, et_ts):
+def do_wb(taw_full, pr_ts, et_ts, irrig_ts=None):
+    if irrig_ts is None:
+        irrig_ts = np.zeros(et_ts.size).astype('int')
+
     num_steps = et_ts.size
 
-    d_ro = taw
+    d_ro = taw_full
     #d_ro = 0
     last_dr = d_ro
+    taw = taw_full
 
     dr_ts = np.zeros(num_steps)
     dp_ts = np.zeros(num_steps)
     phantom_ts = np.zeros(num_steps)
 
+    irrig_on = False
     for i in range(num_steps):
         pr = pr_ts[i]
         et = et_ts[i]
@@ -23,8 +28,22 @@ def do_wb(taw, pr_ts, et_ts):
             phantom = et-(dr-last_dr+pr)
         else:
             phantom = 0
+
+        if phantom > 0 and irrig_ts[i] == 1 and not irrig_on:
+            # redo day with less TAW
+            irrig_on = True
+            #taw = taw_full/2
+            #last_dr = last_dr - taw_full/2
+            #i -= 1
+            #continue
+        elif irrig_ts[i] == 0:
+            irrig_on = False
+            #taw = taw_full
+
+        if irrig_on:
+            dr = min(dr, taw/2)
+
         pr_min_dp = pr - dp 
-        added_to_rz = max(last_dr-dr, 0)
         last_dr = dr
 
         dr_ts[i] = dr
