@@ -20,10 +20,10 @@ br_wgs = to_wgs.transform(*br)
 
 ext = [ul_wgs[1], br_wgs[1], br_wgs[0], ul_wgs[0]]
 
-#in_dir = 'epr_rasters'
-in_dir = 'epr_rasters_avg_aws'
-#out_dir = 'pres'
-out_dir = 'pres_avg_aws'
+in_dir = 'epr_rasters'
+#in_dir = 'epr_rasters_avg_aws'
+out_dir = 'pres'
+#out_dir = 'pres_avg_aws'
 suff = ''
 
 plt.figure(figsize=(8, 4))

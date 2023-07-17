@@ -6,11 +6,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 nodata = -9999
+out_dir = 'data'
 #out_dir = 'data_irrig'
-out_dir = 'data_avg_aws'
+#out_dir = 'data_avg_aws'
 
-#aws = gdal.Open('ucrb_aws.tif').ReadAsArray()
-aws = gdal.Open('avg_aws.tif').ReadAsArray()
+aws = gdal.Open('ucrb_aws.tif').ReadAsArray()
+#aws = gdal.Open('avg_aws.tif').ReadAsArray()
 
 et_arr = pickle.load(open('data/et_interp.p', 'rb'))
 pr_arr = pickle.load(open('data/pr_arr.p', 'rb'))
