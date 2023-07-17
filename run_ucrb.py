@@ -18,7 +18,7 @@ pr_arr = pickle.load(open('data/pr_arr.p', 'rb'))
 
 dr_arr = np.ones_like(et_arr)*nodata
 dp_arr = np.ones_like(et_arr)*nodata
-phantom_arr = np.ones_like(et_arr)*nodata
+et_of_aw_arr = np.ones_like(et_arr)*nodata
 
 dts = pd.date_range('2018-01-01', '2021-12-31')
 #irrig_ts = dts.month.isin(list(range(4, 11))).astype('int')
@@ -29,16 +29,16 @@ for i in range(et_arr.shape[0]):
         if aws[i, j] == nodata:
             continue
 
-        dr_ts, dp_ts, phantom_ts = do_wb(aws[i, j], pr_arr[i, j],
+        dr_ts, dp_ts, et_of_aw_ts = do_wb(aws[i, j], pr_arr[i, j],
                                          et_arr[i, j], irrig_ts=irrig_ts)
 
         dr_arr[i, j] = dr_ts
         dp_arr[i, j] = dp_ts
-        phantom_arr[i, j] = phantom_ts
+        et_of_aw_arr[i, j] = et_of_aw_ts
 
 pickle.dump(dr_arr, open(f'{out_dir}/dr_arr.p', 'wb'))
 pickle.dump(dp_arr, open(f'{out_dir}/dp_arr.p', 'wb'))
-pickle.dump(phantom_arr, open(f'{out_dir}/phantom_arr.p', 'wb'))
+pickle.dump(et_of_aw_arr, open(f'{out_dir}/et_of_aw_arr.p', 'wb'))
 
 #dts = pd.date_range('2019-01-01', '2020-12-31')
 ## water year indices

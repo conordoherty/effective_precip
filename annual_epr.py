@@ -19,7 +19,7 @@ et = pickle.load(open(f'data/et_interp.p', 'rb'))
 pr = pickle.load(open(f'data/pr_arr.p', 'rb'))
 dp = pickle.load(open(f'{in_dir}/dp_arr.p', 'rb'))
 dr = pickle.load(open(f'{in_dir}/dr_arr.p', 'rb'))
-ph = pickle.load(open(f'{in_dir}/phantom_arr.p', 'rb'))
+et_of_aw = pickle.load(open(f'{in_dir}/et_of_aw_arr.p', 'rb'))
 
 dt_range = pd.date_range('2018-01-01', '2021-12-31')
 water_years = list(range(2019, 2022))
@@ -33,7 +33,7 @@ for wyr in water_years:
     yr_ind = (dt_range>=f'{wyr-1}-10-01')&(dt_range<=f'{wyr}-09-30')
     yr_pr = pr[:, :, yr_ind].sum(axis=-1)
     yr_dp = dp[:, :, yr_ind].sum(axis=-1)
-    yr_ph = ph[:, :, yr_ind].sum(axis=-1)
+    yr_et_of_aw = et_of_aw[:, :, yr_ind].sum(axis=-1)
     yr_et = et[:, :, yr_ind].sum(axis=-1)
 
     epr = yr_pr - yr_dp
@@ -42,7 +42,7 @@ for wyr in water_years:
     epr_frac = epr/yr_pr
     epr_frac[(aws==nodata)|(epr==nodata)] = nodata
 
-    yr_ph[aws==nodata] = nodata
+    yr_et_of_aw[aws==nodata] = nodata
 
     write_ras_same(yr_pr, f'{out_dir}/pr_{wyr}.tif', 'ucrb_aws.tif',
                    no_data=nodata)
@@ -50,7 +50,7 @@ for wyr in water_years:
                    no_data=nodata)
     write_ras_same(epr_frac, f'{out_dir}/epr_frac_{wyr}.tif', 'ucrb_aws.tif',
                    no_data=nodata)
-    write_ras_same(yr_ph, f'{out_dir}/phantom_{wyr}.tif', 'ucrb_aws.tif',
+    write_ras_same(yr_et_of_aw, f'{out_dir}/et_of_aw_{wyr}.tif', 'ucrb_aws.tif',
                    no_data=nodata)
     write_ras_same(yr_et, f'{out_dir}/total_et_{wyr}.tif', 'ucrb_aws.tif',
                    no_data=nodata)

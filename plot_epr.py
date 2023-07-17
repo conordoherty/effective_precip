@@ -34,7 +34,7 @@ plt.tight_layout()
 plt.savefig(f'{out_dir}/aws.png')
 plt.clf()
 
-ras = 'phantom'
+ras = 'et_of_aw'
 for yr in range(2019, 2022):
     epr_frac = gdal.Open(f'{in_dir}/epr_frac_{yr}.tif').ReadAsArray()
     epr_frac = np.ma.masked_where(aws.mask, epr_frac)
@@ -61,20 +61,20 @@ for yr in range(2019, 2022):
     plt.savefig(f'{out_dir}/epr_{yr}{suff}.png')
     plt.clf()
 
-    #phantom = gdal.Open(f'{in_dir}/phantom_{yr}.tif').ReadAsArray()
-    #phantom = np.ma.masked_where(aws.mask, phantom)
-    ##print(phantom.min(), phantom.max())
-    #plt.imshow(phantom, extent=ext, vmin=0, vmax=1335, cmap='nipy_spectral')
-    #plt.colorbar(label='Phantom (mm)')
+    #et_of_aw = gdal.Open(f'{in_dir}/et_of_aw_{yr}.tif').ReadAsArray()
+    #et_of_aw = np.ma.masked_where(aws.mask, et_of_aw)
+    ##print(et_of_aw.min(), et_of_aw.max())
+    #plt.imshow(et_of_aw, extent=ext, vmin=0, vmax=1335, cmap='nipy_spectral')
+    #plt.colorbar(label='et_of_aw (mm)')
     #plt.title(f'Water year {yr}')
-    #plt.savefig(f'{out_dir}/phantom_{yr}.png')
+    #plt.savefig(f'{out_dir}/et_of_aw_{yr}.png')
     #plt.clf()
 
     #total = gdal.Open(f'{in_dir}/total_et_{yr}.tif').ReadAsArray()
-    #ph_div_tot = phantom / total
-    #ph_div_tot = np.ma.masked_where(aws.mask, ph_div_tot)
-    #plt.imshow(ph_div_tot, vmin=0, vmax=1, extent=ext, cmap='RdYlBu')
-    #plt.colorbar(label='Phantom / Total ET')
+    #et_of_aw_div_tot = et_of_aw / total
+    #et_of_aw_div_tot = np.ma.masked_where(aws.mask, et_of_aw_div_tot)
+    #plt.imshow(et_of_aw_div_tot, vmin=0, vmax=1, extent=ext, cmap='RdYlBu')
+    #plt.colorbar(label='et_of_aw / Total ET')
     #plt.title(f'Water year {yr}')
-    #plt.savefig(f'{out_dir}/ph_div_tot_{yr}.png')
+    #plt.savefig(f'{out_dir}/et_of_aw_div_tot_{yr}.png')
     #plt.clf()

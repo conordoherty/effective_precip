@@ -15,7 +15,7 @@ def do_wb(taw_full, pr_ts, et_ts, irrig_ts=None):
 
     dr_ts = np.zeros(num_steps)
     dp_ts = np.zeros(num_steps)
-    phantom_ts = np.zeros(num_steps)
+    et_of_aw_ts = np.zeros(num_steps)
 
     irrig_on = False
     for i in range(num_steps):
@@ -25,11 +25,11 @@ def do_wb(taw_full, pr_ts, et_ts, irrig_ts=None):
         dp = max(pr - et - last_dr, 0)
         dr = min(max(last_dr - pr + et + dp, 0), taw)
         if last_dr - pr + et > taw:
-            phantom = et-(dr-last_dr+pr)
+            et_of_aw = et-(dr-last_dr+pr)
         else:
-            phantom = 0
+            et_of_aw = 0
 
-        if phantom > 0 and irrig_ts[i] == 1 and not irrig_on:
+        if et_of_aw > 0 and irrig_ts[i] == 1 and not irrig_on:
             # redo day with less TAW
             irrig_on = True
             #taw = taw_full/2
@@ -48,6 +48,6 @@ def do_wb(taw_full, pr_ts, et_ts, irrig_ts=None):
 
         dr_ts[i] = dr
         dp_ts[i] = dp
-        phantom_ts[i] = phantom
+        et_of_aw_ts[i] = et_of_aw
 
-    return dr_ts, dp_ts, phantom_ts
+    return dr_ts, dp_ts, et_of_aw_ts
