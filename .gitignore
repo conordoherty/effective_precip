@@ -11,3 +11,4 @@ data_avg/*.p
 data_avg_avs/*.p
 pres*
 data_irrig/
+field_shapefiles/*

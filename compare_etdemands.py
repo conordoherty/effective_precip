@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.api import OLS
 
-shp_fn = 'fields_fully_within.shp'
+shp_fn = 'field_shapefiles/fields_fully_within.shp'
 #in_dir = 'epr_rasters_avg_aws'
 in_dir = 'epr_rasters'
 #suff = '_avg_aws'

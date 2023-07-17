@@ -3,8 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.api import OLS
 
-shp_fn = 'fields_fully_within.shp'
-veg_shp_fn = 'fields_fully_within_4326.shp'
+shp_fn = 'field_shapefiles/fields_fully_within.shp'
+veg_shp_fn = 'field_shapefiles/fields_fully_within_4326.shp'
 #in_dir = 'epr_rasters_avg_aws'
 in_dir = 'epr_rasters'
 veget_dir = 'veget_comp'
