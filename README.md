@@ -32,8 +32,3 @@ Pixel-wise water balance to estimate effective precipitation
 - `compare_veget.py` compares field scale annual ET of precipitation with values
   values from from VegET.
 
-## Data
-
-Shapefiles reference in comparison code in drive folder: https://drive.google.com/drive/folders/1cn4U0w_CivTvh8aPoMGGdp9CrEg-Cwp_?usp=drive_link
-
-Data in OpenET drive folder: https://drive.google.com/drive/folders/1ZIks0mq7qJLSYPaRxjPBEPW-SRrJcMRO?usp=share_link
