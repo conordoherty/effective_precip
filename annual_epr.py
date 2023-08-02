@@ -7,11 +7,13 @@ nodata = -9999
 aws = gdal.Open('ucrb_aws.tif').ReadAsArray()
 #aws = gdal.Open('avg_aws.tif').ReadAsArray()
 
-in_dir = 'data'
+in_dir = 'data_runoff'
+#in_dir = 'data'
 #in_dir = 'data_irrig'
 #in_dir = 'data_avg_aws'
 
-out_dir = 'epr_rasters'
+out_dir = 'epr_rasters_runoff'
+#out_dir = 'epr_rasters'
 #out_dir = 'epr_rasters_irrig'
 #out_dir = 'epr_rasters_avg_aws'
 
