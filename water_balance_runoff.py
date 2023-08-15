@@ -1,7 +1,7 @@
 import numpy as np
 from numba import njit
 
-# ~ 0.67 inches
+# threshold ~ 0.67 inches
 runoff_threshold = 17
 CN = 75
 S = (25400-254*CN)/CN
@@ -35,7 +35,7 @@ def do_wb(taw_full, pr_ts, et_ts, irrig_ts=None):
 
         dp = max(pr - ro - et - last_dr, 0)
         dr = min(max(last_dr - pr + ro + et + dp, 0), taw)
-        if last_dr - pr + et > taw:
+        if last_dr + et - pr + ro > taw:
             et_of_aw = et-(dr-last_dr+pr-ro)
         else:
             et_of_aw = 0
