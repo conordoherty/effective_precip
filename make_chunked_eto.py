@@ -85,11 +85,11 @@ crop_gm_inds_arr = np.vstack(crop_gm_inds).T
 @njit
 def get_gridmet_vals(gm_arr, crop_inds):
     num_locs = crop_inds.shape[0]
-    num_days = gm_arr.shape[0]
+    num_days = gm_arr.shape[-1]
     out_arr = np.empty((num_locs, num_days), dtype=np.uint16)
 
     for i in range(num_locs):
-        out_arr[i, :] = (gm_arr[:, crop_inds[i, 0], crop_inds[i, 1]] * ETO_SCALE).astype('uint16')
+        out_arr[i, :] = (gm_arr[crop_inds[i, 0], crop_inds[i, 1], i] * ETO_SCALE).astype('uint16')
 
     return out_arr
 
