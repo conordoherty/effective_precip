@@ -82,7 +82,7 @@ def etof_interp(et_ts, eto_ts, nodata=-9999.):
             end_etof = et_ts[i] / eto_ts[i]
 
             # linear interpolate from start to end
-            etof_ts[start_ind:i] = np.linspace(start_etof, end_etof, i-start_ind)
+            etof_ts[start_ind:i+1] = np.linspace(start_etof, end_etof, i+1-start_ind)
 
             # set current index as start_ind
             start_ind = i
@@ -98,3 +98,64 @@ def etof_interp(et_ts, eto_ts, nodata=-9999.):
 
     # return interpolated ET
     return etof_ts * eto_ts
+
+@njit
+def do_wb_interp(taw_full, pr_ts, et_ts, eto_ts, irrig_ts=None):
+    if irrig_ts is None:
+        irrig_ts = np.zeros(et_ts.size).astype('int')
+
+    num_steps = et_ts.size
+
+    d_ro = taw_full
+    #d_ro = 0
+    last_dr = d_ro
+    taw = taw_full
+
+    dr_ts = np.zeros(num_steps)
+    dp_ts = np.zeros(num_steps)
+    et_of_aw_ts = np.zeros(num_steps)
+
+    et_ts = etof_interp(et_ts, eto_ts)
+
+    irrig_on = False
+    for i in range(num_steps):
+        pr = pr_ts[i]
+        et = et_ts[i]
+        
+        if pr >= runoff_threshold:
+            ro = (pr-0.2*S)**2/(pr+0.8*S)
+        else:
+            ro = 0
+
+
+        dp = max(pr - ro - et - last_dr, 0)
+        dr = min(max(last_dr - pr + ro + et + dp, 0), taw)
+        excess_et = et-(dr-last_dr+pr-ro)
+        if excess_et > taw:
+            et_of_aw = excess_et
+        else:
+            et_of_aw = 0
+
+        if et_of_aw > 0 and irrig_ts[i] == 1 and not irrig_on:
+            # redo day with less TAW
+            irrig_on = True
+            #taw = taw_full/2
+            #last_dr = last_dr - taw_full/2
+            #i -= 1
+            #continue
+        elif irrig_ts[i] == 0:
+            irrig_on = False
+            #taw = taw_full
+
+        if irrig_on:
+            dr = min(dr, taw/2)
+
+        pr_min_dp = pr - dp 
+        last_dr = dr
+
+        dr_ts[i] = dr
+        dp_ts[i] = dp
+        et_of_aw_ts[i] = et_of_aw
+
+    return dr_ts, dp_ts, et_of_aw_ts
+
