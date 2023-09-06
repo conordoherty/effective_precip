@@ -1,7 +1,7 @@
 from osgeo import gdal
 import numpy as np
 import pickle
-from numba import njit, prange
+from numba import njit, prange, set_num_threads
 from pyproj import Transformer
 from netCDF4 import Dataset
 
@@ -9,7 +9,7 @@ with open('data_dir.txt') as f:
     data_dir = f.readline()
     data_dir = data_dir.rstrip()
 
-cdl_fn = data_dir+'oregon/CDL_2022_41.tif'
+cdl_fn = data_dir+'oregon/oregon_cdl_4326.tif'
 sim_ag_keys_fn = data_dir+'oregon/crops.p'
 gm_dir = data_dir+'gridmet/'
 nodata_uint = 32767
@@ -45,8 +45,11 @@ def make_coords_arr(crop_inds, x_ind_coords, y_ind_coords):
 
 # get coordinates of crop pixels in gridmet projection
 crop_coords = make_coords_arr(crop_inds, x_ind_coords, y_ind_coords)
-trans = Transformer.from_crs(cdl_epsg, gridmet_epsg, always_xy=True)
-crop_coords_proj = trans.transform(crop_coords[:, 0], crop_coords[:, 1])
+#trans = Transformer.from_crs(cdl_epsg, gridmet_epsg, always_xy=True)
+#crop_coords_proj = trans.transform(crop_coords[:, 0], crop_coords[:, 1])
+
+# now cdl in 4326 to match ensemble projection
+crop_coords_proj = crop_coords
 
 print('loading precip data')
 pr_ras = gdal.Open(gm_dir+'pr_2016.nc')
@@ -64,7 +67,7 @@ for yr in range(2017, 2022):
     #pr_yr_arr = pr_yr_ras.ReadAsArray()
     #pr_yr_ras = None
 
-    pr_ds = Dataset(gm_dir+'pr_2016.nc', 'r')
+    pr_ds = Dataset(gm_dir+f'pr_{yr}.nc', 'r')
     # stack along time axis
     pr_arr = np.vstack((pr_arr, pr_ds['precipitation_amount'][:]))
     pr_ds.close()
@@ -77,7 +80,8 @@ def get_inds(x_coords, y_coords, gt):
 
     return x_inds, y_inds
 
-crop_gm_inds = get_inds(crop_coords_proj[0], crop_coords_proj[1], pr_gt)
+#crop_gm_inds = get_inds(crop_coords_proj[0], crop_coords_proj[1], pr_gt)
+crop_gm_inds = get_inds(crop_coords_proj[:, 0], crop_coords_proj[:, 1], pr_gt)
 crop_gm_inds_arr = np.vstack(crop_gm_inds).T
 
 # pass chunks of inds to this function
@@ -95,7 +99,9 @@ def get_gridmet_vals(gm_arr, crop_inds):
 print('writing chunks')
 chunk_size = int(1e6)
 for i, row in enumerate(range(0, crop_gm_inds_arr.shape[0], chunk_size)):
+    print(f'chunk {i}')
     chunk_arr = get_gridmet_vals(pr_arr.data, crop_gm_inds_arr[row:row+chunk_size, :])
     chunk_id = str(i).zfill(2)
-    with open(data_dir+f'pr_chunked/pr_chunk{chunk_id}.p', 'wb') as f:
-        pickle.dump(chunk_arr, f)
+    #with open(data_dir+f'pr_chunked/pr_chunk{chunk_id}.p', 'wb') as f:
+    #    pickle.dump(chunk_arr, f)
+    np.savez_compressed(data_dir+f'pr_chunked/pr_chunk{chunk_id}', pr=chunk_arr)
