@@ -18,6 +18,12 @@ def write_ras_same(array, new_ras_fn, template_fn, ras_format='GTiff', no_data=N
         raise Exception('Array type is int64 which gdal does not understand')
     d_type = gdal_array.NumericTypeCodeToGDALTypeCode(array.dtype)
 
+    # gdal can't understand numpy int types?
+    # e.g. gdal was interpreting np.uint16 nodata val as float
+    # so just cast to python int (I guess?)
+    if d_type <= 5:
+        d_type = int(d_type)
+
     driver = gdal.GetDriverByName(ras_format)
     out_ras = driver.Create(new_ras_fn, cols, rows, 1, d_type)
     out_ras.SetGeoTransform(template_gt)

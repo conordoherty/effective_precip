@@ -93,14 +93,14 @@ def etof_interp(et_ts, eto_ts, nodata=-9999.):
             continue
         else:
             # something is wrong !!!
-            #raise Excpetion('should not be here!!!')
             print('should not be here!!!')
+            #raise Excpetion()
 
     # return interpolated ET
     return etof_ts * eto_ts
 
 @njit
-def do_wb_interp(taw_full, pr_ts, et_ts, eto_ts, irrig_ts=None):
+def do_wb_interp(taw_full, pr_ts, et_ts, eto_ts, nodata=-9999., irrig_ts=None):
     if irrig_ts is None:
         irrig_ts = np.zeros(et_ts.size).astype('int')
 
@@ -115,7 +115,7 @@ def do_wb_interp(taw_full, pr_ts, et_ts, eto_ts, irrig_ts=None):
     dp_ts = np.zeros(num_steps)
     et_of_aw_ts = np.zeros(num_steps)
 
-    et_ts = etof_interp(et_ts, eto_ts)
+    et_ts = etof_interp(et_ts, eto_ts, nodata=nodata)
 
     irrig_on = False
     for i in range(num_steps):
@@ -126,7 +126,6 @@ def do_wb_interp(taw_full, pr_ts, et_ts, eto_ts, irrig_ts=None):
             ro = (pr-0.2*S)**2/(pr+0.8*S)
         else:
             ro = 0
-
 
         dp = max(pr - ro - et - last_dr, 0)
         dr = min(max(last_dr - pr + ro + et + dp, 0), taw)
@@ -157,5 +156,5 @@ def do_wb_interp(taw_full, pr_ts, et_ts, eto_ts, irrig_ts=None):
         dp_ts[i] = dp
         et_of_aw_ts[i] = et_of_aw
 
-    return dr_ts, dp_ts, et_of_aw_ts
+    return dr_ts, dp_ts, et_of_aw_ts, et_ts
 

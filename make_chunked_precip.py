@@ -92,7 +92,7 @@ def get_gridmet_vals(gm_arr, crop_inds):
     out_arr = np.empty((num_locs, num_days), dtype=np.uint16)
 
     for i in range(num_locs):
-        out_arr[i, :] = gm_arr[:, crop_inds[i, 0], crop_inds[i, 1]]
+        out_arr[i, :] = gm_arr[:, crop_inds[i, 1], crop_inds[i, 0]]
 
     return out_arr
 
