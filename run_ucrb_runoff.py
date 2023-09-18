@@ -30,7 +30,7 @@ for i in range(et_arr.shape[0]):
             continue
 
         dr_ts, dp_ts, et_of_aw_ts = do_wb(aws[i, j], pr_arr[i, j],
-                                         et_arr[i, j], irrig_ts=irrig_ts)
+                                          et_arr[i, j], irrig_ts=irrig_ts)
 
         dr_arr[i, j] = dr_ts
         dp_arr[i, j] = dp_ts
