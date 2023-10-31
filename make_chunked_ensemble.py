@@ -102,7 +102,7 @@ if __name__ == '__main__':
     #with ProcessPoolExecutor(max_workers=8, max_tasks_per_child=2) as e:
     with ThreadPoolExecutor(max_workers=8) as e:
         #futures = [e.submit(make_chunk, chunk_num, chunk_size, crop_inds_arr) for chunk_num in range(83)]
-        for chunk_num in range(47, 60):
+        for chunk_num in range(83):
             e.submit(make_chunk, chunk_num, chunk_size, crop_inds_arr)
     
         #for future in as_completed(futures):

@@ -65,8 +65,8 @@ def do_wb(taw_full, pr_ts, et_ts, irrig_ts=None):
     return dr_ts, dp_ts, et_of_aw_ts
 
 @njit
-def etof_interp(et_ts, eto_ts, nodata=-9999.):
-    etof_ts = np.zeros_like(eto_ts)
+def etof_interp(et_ts, eto_ts, nodata=-9999., dtype='float32'):
+    etof_ts = np.zeros_like(eto_ts, dtype=dtype)
 
     # fill leading empty values with first EToF
     first_et_ind = np.argmax(et_ts != nodata)
@@ -94,7 +94,7 @@ def etof_interp(et_ts, eto_ts, nodata=-9999.):
         else:
             # something is wrong !!!
             print('should not be here!!!')
-            #raise Excpetion()
+            raise Exception
 
     # return interpolated ET
     return etof_ts * eto_ts
@@ -111,9 +111,10 @@ def do_wb_interp(taw_full, pr_ts, et_ts, eto_ts, nodata=-9999., irrig_ts=None):
     last_dr = d_ro
     taw = taw_full
 
-    dr_ts = np.zeros(num_steps)
-    dp_ts = np.zeros(num_steps)
-    et_of_aw_ts = np.zeros(num_steps)
+    dr_ts = np.zeros(num_steps, dtype='float32')
+    dp_ts = np.zeros(num_steps, dtype='float32')
+    ro_ts = np.zeros(num_steps, dtype='float32')
+    et_of_aw_ts = np.zeros(num_steps, dtype='float32')
 
     et_ts = etof_interp(et_ts, eto_ts, nodata=nodata)
 
@@ -130,7 +131,7 @@ def do_wb_interp(taw_full, pr_ts, et_ts, eto_ts, nodata=-9999., irrig_ts=None):
         dp = max(pr - ro - et - last_dr, 0)
         dr = min(max(last_dr - pr + ro + et + dp, 0), taw)
         excess_et = et-(dr-last_dr+pr-ro)
-        if excess_et > taw:
+        if excess_et > 0:
             et_of_aw = excess_et
         else:
             et_of_aw = 0
@@ -154,7 +155,8 @@ def do_wb_interp(taw_full, pr_ts, et_ts, eto_ts, nodata=-9999., irrig_ts=None):
 
         dr_ts[i] = dr
         dp_ts[i] = dp
+        ro_ts[i] = ro
         et_of_aw_ts[i] = et_of_aw
 
-    return dr_ts, dp_ts, et_of_aw_ts, et_ts
+    return dr_ts, dp_ts, et_of_aw_ts, ro_ts
 

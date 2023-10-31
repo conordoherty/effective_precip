@@ -4,6 +4,9 @@ import pickle
 from numba import njit, prange, set_num_threads
 from pyproj import Transformer
 from netCDF4 import Dataset
+from concurrent.futures import ProcessPoolExecutor
+
+gdal.UseExceptions()
 
 with open('data_dir.txt') as f:
     data_dir = f.readline()
@@ -68,6 +71,7 @@ for yr in range(2017, 2022):
     #pr_yr_ras = None
 
     pr_ds = Dataset(gm_dir+f'pr_{yr}.nc', 'r')
+    pr_ds.set_auto_scale(False)
     # stack along time axis
     pr_arr = np.vstack((pr_arr, pr_ds['precipitation_amount'][:]))
     pr_ds.close()
@@ -98,10 +102,16 @@ def get_gridmet_vals(gm_arr, crop_inds):
 
 print('writing chunks')
 chunk_size = int(1e6)
-for i, row in enumerate(range(0, crop_gm_inds_arr.shape[0], chunk_size)):
-    print(f'chunk {i}')
+#for i, row in enumerate(range(0, crop_gm_inds_arr.shape[0], chunk_size)):
+
+def make_chunk(chunk):
+    print(f'chunk {chunk}')
+    row = chunk*chunk_size
     chunk_arr = get_gridmet_vals(pr_arr.data, crop_gm_inds_arr[row:row+chunk_size, :])
-    chunk_id = str(i).zfill(2)
+    chunk_id = str(chunk).zfill(2)
     #with open(data_dir+f'pr_chunked/pr_chunk{chunk_id}.p', 'wb') as f:
     #    pickle.dump(chunk_arr, f)
     np.savez_compressed(data_dir+f'pr_chunked/pr_chunk{chunk_id}', pr=chunk_arr)
+
+with ProcessPoolExecutor(max_workers=20) as e:
+    e.map(make_chunk, range(83))
