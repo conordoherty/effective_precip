@@ -36,7 +36,7 @@ def do_wb(taw_full, pr_ts, et_ts, irrig_ts=None):
         dp = max(pr - ro - et - last_dr, 0)
         dr = min(max(last_dr - pr + ro + et + dp, 0), taw)
         excess_et = et-(dr-last_dr+pr-ro)
-        if excess_et > taw:
+        if excess_et > 0:
             et_of_aw = excess_et
         else:
             et_of_aw = 0
