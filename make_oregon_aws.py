@@ -6,10 +6,14 @@ from ras_utils import write_ras_same
 
 gdal.UseExceptions()
 
+with open('data_dir.txt') as f:
+    data_dir = f.readline()
+    data_dir = data_dir.rstrip()
+
 nodata = -9999.
 gssurgo_nodata = 2147483647
 uint16_nodata = np.array([-1]).astype('uint16')[0]
-data_dir = '/nobackup/cdohert1/gssurgo_mukey'
+data_dir = data_dir + 'gssurgo_mukey'
 mukey_fn = data_dir+'/oregon_mukey.tif'
 
 mukey = gdal.Open(mukey_fn).ReadAsArray()
