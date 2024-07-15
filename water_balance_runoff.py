@@ -3,6 +3,9 @@ from numba import njit
 
 # threshold ~ 0.67 inches
 runoff_threshold = 17
+
+# CN = f(soil, crop)
+
 CN = 75
 S = (25400-254*CN)/CN
 
