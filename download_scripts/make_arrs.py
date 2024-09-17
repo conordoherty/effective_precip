@@ -17,17 +17,26 @@ eto_arr = np.ones((ras.RasterYSize, ras.RasterXSize, dt_range.size))*nodata
 et_arr = np.ones((ras.RasterYSize, ras.RasterXSize, dt_range.size))*nodata
 pr_arr = np.ones((ras.RasterYSize, ras.RasterXSize, dt_range.size))*nodata
 
-for i, fn in enumerate(eto_fns):
+i=0
+for date in dt_range:
+    ymd = date.strftime("%Y%m%d")
+    eto_fn = glob.glob('bc_eto/'+ymd+'.tif')[0]
+    eto_arr[:, :, i] = gdal.Open(eto_fn).ReadAsArray()
+
+
+# for i, fn in enumerate(eto_fns):
     #if i % 100 == 0:
     #    print(fn)
 
-    eto_arr[:, :, i] = gdal.Open(fn).ReadAsArray()
+    # eto_arr[:, :, i] = gdal.Open(fn).ReadAsArray()
 
-    dt = dt_range[i]
-    pr_fns = glob.glob(f'precip/*{dt.strftime("%Y%m%d")}.tif')
+    # dt = dt_range[i]
+    # pr_fns = glob.glob(f'precip/*{dt.strftime("%Y%m%d")}.tif')
+    pr_fns = glob.glob(f'precip/*{date.strftime("%Y%m%d")}.tif')
     pr_arr[:, :, i] = gdal.Open(pr_fns[0]).ReadAsArray()
 
-    et_ens_fns = glob.glob(f'et_ens/*{dt.strftime("%Y%m%d")}.tif')
+    # et_ens_fns = glob.glob(f'et_ens/*{dt.strftime("%Y%m%d")}.tif')
+    et_ens_fns = glob.glob(f'et_ens/*{date.strftime("%Y%m%d")}.tif')
     if len(et_ens_fns) > 0:
         et_day = gdal.Open(et_ens_fns[0]).ReadAsArray()
         # nodata is -1 for et
@@ -35,6 +44,8 @@ for i, fn in enumerate(eto_fns):
         et_arr[:, :, i] = et_day
         a = gdal.Open(et_ens_fns[0])
         print(et_ens_fns[0], a.RasterYSize, a.RasterXSize)
+    
+    i+=1
 
 pickle.dump(eto_arr, open('eto_arr.p', 'wb'))
 pickle.dump(et_arr, open('et_arr.p', 'wb'))
