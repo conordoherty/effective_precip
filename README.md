@@ -1,3 +1,7 @@
+# NOTE
+
+This repository has been archived. A updated paper and repository will be made available soon.
+
 # effective_precip
 Pixel-wise water balance to estimate effective precipitation
 
